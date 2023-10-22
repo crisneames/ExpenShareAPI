@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IEventRepository, EventRepository>();
 
 var app = builder.Build();
 
