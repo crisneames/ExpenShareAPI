@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj": {}
+    "/Users/crisneames/projects/ExpenShareAPI/ExpenShareAPI/ExpenShareAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj": {
+    "/Users/crisneames/projects/ExpenShareAPI/ExpenShareAPI/ExpenShareAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
+        "projectUniqueName": "/Users/crisneames/projects/ExpenShareAPI/ExpenShareAPI/ExpenShareAPI.csproj",
         "projectName": "ExpenShareAPI",
-        "projectPath": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
-        "packagesPath": "C:\\Users\\deann\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\obj\\",
+        "projectPath": "/Users/crisneames/projects/ExpenShareAPI/ExpenShareAPI/ExpenShareAPI.csproj",
+        "packagesPath": "/Users/crisneames/.nuget/packages/",
+        "outputPath": "/Users/crisneames/projects/ExpenShareAPI/ExpenShareAPI/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\deann\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/crisneames/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -42,19 +40,19 @@
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[7.0.5, )"
+              "version": "[7.0.13, )"
             },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
-              "version": "[5.1.1, )"
+              "version": "[5.1.2, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
-              "version": "[7.0.10, )"
+              "version": "[7.0.11, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -76,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
         }
       }
     }
