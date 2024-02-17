@@ -127,5 +127,57 @@ namespace ExpenShareAPI.Repositories
                 }
             }
         }
+
+        public Event GetEventWithUsers(int EventId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT event.id AS EventId
+	                                           ,event.name
+	                                           ,event.date
+	                                           ,event.comment
+	                                           ,[user].name
+                                               ,[user].email
+                                        FROM event
+                                        JOIN userEvent on event.id = userEvent.eventId
+                                        JOIN [user] on [user].id = userEvent.userId AS UserId
+                                        WHERE event.id = @EventId";
+
+                    cmd.Parameters.AddWithValue("EventId", EventId);
+
+                    var reader = cmd.ExecuteReader();
+
+                    Event gig = null;
+
+                    while (reader.Read())
+                    {
+                        gig = new Event
+                        {
+                            Id = DbUtils.GetInt(reader, "EventId"),
+                            Name = DbUtils.GetString(reader, "name"),
+                            Date = DbUtils.GetDateTime(reader, "date"),
+                            Comment = DbUtils.GetString(reader, "comment"),
+                            User = new List<User>()
+                        };
+
+                        if (DbUtils.IsNotDbNull(reader, "UserId"))
+                        {
+                            gig.User.Add(new User()
+                            {
+                                Id = DbUtils.GetInt(reader, "UserId"),
+                                Name = DbUtils.GetString(reader, "name"),
+                                Email = DbUtils.GetString(reader, "email")
+                            });
+                        }
+                    }
+
+                    reader.Close();
+                    return gig;
+                }
+            }
+        }
     }
 }
