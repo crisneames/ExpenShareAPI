@@ -8,6 +8,7 @@ namespace ExpenShareAPI.Repositories
         void DeleteEvent(int id);
         Event GetEventById(int id);
         List<Event> GetEvents();
+        Event GetEventWithUsers(int EventId);
         void UpdateEvent(Event gig);
     }
 }
