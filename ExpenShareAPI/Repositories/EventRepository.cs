@@ -135,15 +135,16 @@ namespace ExpenShareAPI.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT event.id AS EventId
-	                                           ,event.name
-	                                           ,event.date
-	                                           ,event.comment
-	                                           ,[user].name
+                    cmd.CommandText = @"SELECT event.id as EventId
+	                                           ,[event].name
+	                                           ,[event].date
+	                                           ,[event].comment
+	                                           ,[user].name as UserName
                                                ,[user].email
+                                               ,userEvent.userId as UserId
                                         FROM event
-                                        JOIN userEvent on event.id = userEvent.eventId
-                                        JOIN [user] on [user].id = userEvent.userId AS UserId
+                                        JOIN userEvent on EventId = userEvent.eventId
+                                        JOIN [user] on [user].id = userEvent.userId
                                         WHERE event.id = @EventId";
 
                     cmd.Parameters.AddWithValue("EventId", EventId);
@@ -168,7 +169,7 @@ namespace ExpenShareAPI.Repositories
                             gig.User.Add(new User()
                             {
                                 Id = DbUtils.GetInt(reader, "UserId"),
-                                Name = DbUtils.GetString(reader, "name"),
+                                Name = DbUtils.GetString(reader, "UserName"),
                                 Email = DbUtils.GetString(reader, "email")
                             });
                         }

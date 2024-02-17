@@ -7,6 +7,7 @@ namespace ExpenShareAPI.Models
 		public string Name { get; set; }
 		public DateTime Date { get; set; }
 		public string? Comment { get; set; }
+        public List<User> User { get; set; }
     }
 
 

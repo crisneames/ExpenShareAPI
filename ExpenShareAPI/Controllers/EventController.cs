@@ -24,10 +24,22 @@ namespace ExpenShareAPI.Controllers
         }
 
         // GET api/<EventController>/5
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        //[HttpGet("{id}")]
+        //public IActionResult Get(int id)
+        //{
+        //    var gig = _eventRepository.GetEventById(id);
+        //    if (gig == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(gig);
+        //}
+
+        // GET api/<EventController>/5
+        [HttpGet("{EventId}")]
+        public IActionResult Get(int EventId)
         {
-            var gig = _eventRepository.GetEventById(id);
+            var gig = _eventRepository.GetEventWithUsers(EventId);
             if (gig == null)
             {
                 return NotFound();
