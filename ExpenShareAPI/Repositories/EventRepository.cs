@@ -1,6 +1,7 @@
 ﻿using System;
 using ExpenShareAPI.Models;
 using ExpenShareAPI.Utils;
+using NuGet.DependencyResolver;
 
 namespace ExpenShareAPI.Repositories
 {
@@ -128,6 +129,60 @@ namespace ExpenShareAPI.Repositories
             }
         }
 
+        /* public Event GetEventWithUsers(int EventId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT event.id AS EventId
+	                                           ,[event].name
+	                                           ,[event].date
+	                                           ,[event].comment
+	                                           ,[user].name AS UserName
+                                               ,[user].email
+                                               ,[user].id AS UserId
+                                        FROM event
+                                        JOIN userEvent on EventId = userEvent.eventId
+                                        JOIN [user] on [user].id = userEvent.userId
+                                        WHERE event.id = @EventId";
+
+                    cmd.Parameters.AddWithValue("@EventId", EventId);
+
+                    var reader = cmd.ExecuteReader();
+
+                    Event gig = new();
+
+                    while (reader.Read())
+                    {
+                        if(gig.Id == 0)
+                        {
+                            gig = new Event()
+                            {
+                                Id = DbUtils.GetInt(reader, "EventId"),
+                                Name = DbUtils.GetString(reader, "name"),
+                                Date = DbUtils.GetDateTime(reader, "date"),
+                                Comment = DbUtils.GetString(reader, "comment"),
+                                User = new List<User>()
+                            };
+                        }
+                        
+                        gig.User.Add(new User()
+                        {
+                            Id = DbUtils.GetInt(reader, "UserId"),
+                            Name = DbUtils.GetString(reader, "UserName"),
+                            Email = DbUtils.GetString(reader, "email")
+                        });
+
+                    }
+
+                    reader.Close();
+                    return gig;
+                }
+            }
+        }*/
+
         public Event GetEventWithUsers(int EventId)
         {
             using (var conn = Connection)
@@ -135,48 +190,58 @@ namespace ExpenShareAPI.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT event.id as EventId
-	                                           ,[event].name
-	                                           ,[event].date
-	                                           ,[event].comment
-	                                           ,[user].name as UserName
-                                               ,[user].email
-                                               ,userEvent.userId as UserId
-                                        FROM event
-                                        JOIN userEvent on EventId = userEvent.eventId
-                                        JOIN [user] on [user].id = userEvent.userId
-                                        WHERE event.id = @EventId";
+                    cmd.CommandText = @"SELECT event.id AS EventId
+                                       ,[event].name
+                                       ,[event].date
+                                       ,[event].comment
+                                       ,[user].name AS UserName
+                                       ,[user].email
+                                       ,[user].id AS UserId
+                                FROM event
+                                JOIN userEvent ON event.id = userEvent.eventId
+                                JOIN [user] ON [user].id = userEvent.userId
+                                WHERE event.id = @EventId";
 
-                    cmd.Parameters.AddWithValue("EventId", EventId);
+                    cmd.Parameters.AddWithValue("@EventId", EventId);
 
                     var reader = cmd.ExecuteReader();
 
                     Event gig = null;
 
+                    Dictionary<int, Event> eventDictionary = new Dictionary<int, Event>();
+
                     while (reader.Read())
                     {
-                        gig = new Event
-                        {
-                            Id = DbUtils.GetInt(reader, "EventId"),
-                            Name = DbUtils.GetString(reader, "name"),
-                            Date = DbUtils.GetDateTime(reader, "date"),
-                            Comment = DbUtils.GetString(reader, "comment"),
-                            User = new List<User>()
-                        };
+                        int eventId = DbUtils.GetInt(reader, "EventId");
 
-                        if (DbUtils.IsNotDbNull(reader, "UserId"))
+                        if (!eventDictionary.ContainsKey(eventId))
                         {
-                            gig.User.Add(new User()
+                            gig = new Event()
                             {
-                                Id = DbUtils.GetInt(reader, "UserId"),
-                                Name = DbUtils.GetString(reader, "UserName"),
-                                Email = DbUtils.GetString(reader, "email")
-                            });
+                                Id = eventId,
+                                Name = DbUtils.GetString(reader, "name"),
+                                Date = DbUtils.GetDateTime(reader, "date"),
+                                Comment = DbUtils.GetString(reader, "comment"),
+                                User = new List<User>()
+                            };
+
+                            eventDictionary[eventId] = gig;
                         }
+
+                        gig = eventDictionary[eventId];
+
+                        gig.User.Add(new User()
+                        {
+                            Id = DbUtils.GetInt(reader, "UserId"),
+                            Name = DbUtils.GetString(reader, "UserName"),
+                            Email = DbUtils.GetString(reader, "email")
+                        });
                     }
 
                     reader.Close();
-                    return gig;
+
+                    // Return the event if found, otherwise return null
+                    return eventDictionary.ContainsKey(EventId) ? eventDictionary[EventId] : null;
                 }
             }
         }
