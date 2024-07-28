@@ -33,6 +33,11 @@ public static class DbUtils
         return reader.GetInt32(reader.GetOrdinal(column));
     }
 
+    public static decimal GetDecimal (SqlDataReader reader, string column)
+    {
+        return reader.GetDecimal(reader.GetOrdinal(column));
+    }
+
     /// <summary>
     ///  Get a DateTime from a data reader object.
     ///  This method assumes the value is not NULL.

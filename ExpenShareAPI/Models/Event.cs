@@ -8,6 +8,7 @@ namespace ExpenShareAPI.Models
 		public DateTime Date { get; set; }
 		public string? Comment { get; set; }
         public List<User> User { get; set; }
+		public List<Expense> Expense { get; set; }
     }
 
 

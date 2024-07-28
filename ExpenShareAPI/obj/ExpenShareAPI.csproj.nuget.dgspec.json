@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\deann\\source\\repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj": {}
+    "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\deann\\source\\repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj": {
+    "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\deann\\source\\repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
+        "projectUniqueName": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
         "projectName": "ExpenShareAPI",
-        "projectPath": "C:\\Users\\deann\\source\\repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
+        "projectPath": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
         "packagesPath": "C:\\Users\\deann\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\deann\\source\\repos\\ExpenShareAPI\\ExpenShareAPI\\obj\\",
+        "outputPath": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\deann\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -22,6 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,6 +35,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -46,7 +52,7 @@
             },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
-              "version": "[5.1.2, )"
+              "version": "[5.2.1, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
@@ -76,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\RuntimeIdentifierGraph.json"
         }
       }
     }
