@@ -191,16 +191,20 @@ namespace ExpenShareAPI.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT event.id AS EventId
-                                       ,[event].name
-                                       ,[event].date
-                                       ,[event].comment
-                                       ,[user].name AS UserName
-                                       ,[user].email
-                                       ,[user].id AS UserId
-                                FROM event
-                                JOIN userEvent ON event.id = userEvent.eventId
-                                JOIN [user] ON [user].id = userEvent.userId
-                                WHERE event.id = @EventId";
+                                                ,[event].name
+                                                ,[event].date
+                                                ,[event].comment
+                                                ,[user].name AS UserName
+                                                ,[user].email
+                                                ,[user].id AS UserId
+		                                        ,expense.name AS ExpenseName
+		                                        ,expense.amount AS Amount
+		                                        ,expense.comment AS ExpenseComment
+                                        FROM event
+                                        JOIN userEvent ON event.id = userEvent.eventId
+                                        JOIN [user] ON [user].id = userEvent.userId
+                                        JOIN expense ON expense.eventId = userEvent.eventId
+                                        WHERE event.id = @EventId";
 
                     cmd.Parameters.AddWithValue("@EventId", EventId);
 
@@ -222,7 +226,8 @@ namespace ExpenShareAPI.Repositories
                                 Name = DbUtils.GetString(reader, "name"),
                                 Date = DbUtils.GetDateTime(reader, "date"),
                                 Comment = DbUtils.GetString(reader, "comment"),
-                                User = new List<User>()
+                                User = new List<User>(),
+                                Expense = new List<Expense>()
                             };
 
                             eventDictionary[eventId] = gig;
@@ -235,6 +240,13 @@ namespace ExpenShareAPI.Repositories
                             Id = DbUtils.GetInt(reader, "UserId"),
                             Name = DbUtils.GetString(reader, "UserName"),
                             Email = DbUtils.GetString(reader, "email")
+                        });
+
+                        gig.Expense.Add(new Expense()
+                        {
+                            Name = DbUtils.GetString(reader, "ExpenseName"),
+                            Amount = DbUtils.GetDecimal(reader, "Amount"),
+                            Comment = DbUtils.GetString(reader, "ExpenseComment")
                         });
                     }
 
