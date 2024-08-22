@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.Xml;
 using ExpenShareAPI.Models;
 using ExpenShareAPI.Utils;
 using NuGet.DependencyResolver;
@@ -194,8 +195,9 @@ namespace ExpenShareAPI.Repositories
                                                 ,[event].name
                                                 ,[event].date
                                                 ,[event].comment
-                                                ,[user].name AS UserName
+                                                ,[user].userName AS UserName
                                                 ,[user].email
+                                                ,[user].fullName
                                                 ,[user].id AS UserId
 		                                        ,expense.name AS ExpenseName
 		                                        ,expense.amount AS Amount
@@ -238,8 +240,9 @@ namespace ExpenShareAPI.Repositories
                         gig.User.Add(new User()
                         {
                             Id = DbUtils.GetInt(reader, "UserId"),
-                            Name = DbUtils.GetString(reader, "UserName"),
-                            Email = DbUtils.GetString(reader, "email")
+                            UserName = DbUtils.GetString(reader, "UserName"),
+                            Email = DbUtils.GetString(reader, "email"),
+                            FullName = DbUtils.GetString(reader, "fullName")
                         });
 
                         gig.Expense.Add(new Expense()
@@ -256,6 +259,139 @@ namespace ExpenShareAPI.Repositories
                     return eventDictionary.ContainsKey(EventId) ? eventDictionary[EventId] : null;
                 }
             }
+        }
+
+        public IEnumerable<UserEventExpenseDto> GetUserExpenses()
+        {
+            var results = new List<UserEventExpenseDto>();
+
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT
+	                                        U.id AS UserId,
+	                                        U.userName AS UserName,
+	                                        E.id AS EventId,
+	                                        E.name AS EventName,
+	                                        SUM(X.amount) AS TotalExpenseAmount,
+	                                        UserCounts.NumberOfUsers
+                                        FROM
+	                                        [user] U
+                                        JOIN
+	                                        userEvent UE ON U.id = UE.userId
+                                        JOIN
+	                                        event E ON UE.eventId = E.id
+                                        JOIN
+	                                        expense X ON E.id = X.eventId
+                                        JOIN
+	                                        (
+		                                        SELECT eventId, COUNT(DISTINCT userId) AS NumberOfUsers
+		                                        FROM userEvent
+		                                        GROUP BY eventId
+	                                        ) AS UserCounts ON E.id = UserCounts.eventId
+                                        GROUP BY
+	                                        U.id, U.userName, E.id, E.name, UserCounts.NumberOfUsers;";
+
+                    var reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        int userId = DbUtils.GetInt(reader, "UserId");
+                        string userName = DbUtils.GetString(reader, "UserName");
+                        int eventId = DbUtils.GetInt(reader, "EventId");
+                        string eventName = DbUtils.GetString(reader, "EventName");
+                        decimal totalExpenseAmount = DbUtils.GetDecimal(reader, "TotalExpenseAmount");
+                        int numberOfUsers = DbUtils.GetInt(reader, "NumberOfUsers");
+
+                        decimal userExpensePortion = numberOfUsers > 0 ? totalExpenseAmount / numberOfUsers : 0;
+
+                        results.Add(new UserEventExpenseDto
+                        {
+                            UserId = userId,
+                            UserName = userName,
+                            EventId = eventId,
+                            EventName = eventName,
+                            TotalExpenseAmount = totalExpenseAmount,
+                            NumberOfUsers = numberOfUsers,
+                            UserExpensePortion = userExpensePortion
+                        });
+
+                    }
+                }
+            }
+                
+            return results;
+        }
+
+        public IEnumerable<EventWithUsersDto> GetEventWithUsers()
+        {
+            var results = new List<EventWithUsersDto>();
+
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT 
+	                                        e.id AS EventId,
+	                                        e.name AS EventName,
+	                                        e.date,
+	                                        e.comment,
+	                                        u.id AS UserId,
+	                                        u.userName AS UserName,
+                                            u.fullName,
+	                                        u.email
+                                        FROM
+	                                        event E
+                                        JOIN
+	                                        userEvent UE ON e.id = UE.eventId
+                                        JOIN
+	                                        [user] U ON UE.userId = U.id";
+
+                    var reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        int eventId = DbUtils.GetInt(reader, "EventId");
+                        string eventName = DbUtils.GetString(reader, "EventName");
+                        DateTime eventDate = DbUtils.GetDateTime(reader, "date");
+                        string eventComment = DbUtils.GetString(reader, "comment");
+                        int userId = DbUtils.GetInt(reader, "UserId");
+                        string userName = DbUtils.GetString(reader, "UserName");
+                        string fullName = DbUtils.GetString(reader, "fullName");
+                        string userEmail = DbUtils.GetString(reader, "email");
+
+                        var existingEvent = results.Find(e => e.EventId == eventId);
+
+                        if (existingEvent == null)
+                        {
+                            existingEvent = new EventWithUsersDto
+                            {
+                                EventId = eventId,
+                                EventName = eventName,
+                                EventDate = eventDate,
+                                EventComment = eventComment,
+                                Users = new List<User>()
+                            };
+
+                            results.Add(existingEvent);
+                        }
+
+                        existingEvent.Users.Add(new User
+                        {
+                            Id = userId,
+                            UserName = userName,
+                            FullName = fullName,
+                            Email = userEmail
+                        });
+                    }
+                }
+
+                return results;
+            }
+
         }
     }
 }

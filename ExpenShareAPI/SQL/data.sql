@@ -9,12 +9,30 @@ GO
 DROP TABLE IF EXISTS userEvent
 DROP TABLE IF EXISTS expense
 DROP TABLE IF EXISTS event
+DROP TABLE IF EXISTS tokens
 DROP TABLE IF EXISTS [user]
 
+
 CREATE TABLE [user] (
-  [id] integer PRIMARY KEY IDENTITY,
-  [name] varchar(255),
-  [email] varchar(255)
+  [id] integer PRIMARY KEY IDENTITY(1,1),     
+  [userName] VARCHAR(255) UNIQUE NOT NULL, 
+  [passwordHash] VARCHAR(255) NOT NULL,   
+  [email] VARCHAR(255) UNIQUE,            
+  [fullName] VARCHAR(255),               
+  [createdAt] DATETIME DEFAULT GETDATE(),  
+  [ipdatedAt] DATETIME DEFAULT GETDATE(),  
+  [lastLogin] DATETIME                     
+)
+GO
+
+CREATE TABLE [tokens] (
+    [tokenId] INT PRIMARY KEY IDENTITY(1,1),
+    [refreshToken] VARCHAR(255),                  
+    [expiresAt] DATETIME,                          
+    [createdAt] DATETIME DEFAULT GETDATE(),        
+    [revokedAt] DATETIME,
+    [userId] INT,
+    CONSTRAINT UC_RefreshToken UNIQUE (RefreshToken) 
 )
 GO
 
@@ -46,14 +64,23 @@ ALTER TABLE [userEvent] ADD FOREIGN KEY ([userId]) REFERENCES [user] ([id])
 ALTER TABLE [userEvent] ADD FOREIGN KEY ([eventId]) REFERENCES [event] ([id])
 
 ALTER TABLE [expense] ADD FOREIGN KEY ([eventId]) REFERENCES [event] ([id])
+
+ALTER TABLE [tokens] ADD FOREIGN KEY ([userId]) REFERENCES [user] ([id])
 GO
 
 INSERT INTO
-[user](name, email)
+[user](userName, passwordHash, email, fullName, createdAt)
 VALUES
-('Cristi Neames', 'cris@email.com'),
-('Deanna Hollifield', 'deeee@test.com'),
-('Cliff Neames', 'clifford@mail.com')
+('CrisN24', 'hashedpassword_1', 'cris@email.com', 'Cristi Neames', GETDATE()),
+('DHolli66', 'hashedpassword_2', 'deeee@test.com', 'Deanna Hollifield', GETDATE()),
+('cliffy2', 'hashedpassword_3', 'clifford@mail.com', 'Cliff Neames', GETDATE())
+
+INSERT INTO
+[tokens](refreshToken, expiresAt, createdAt, userId)
+VALUES
+('sampleHashedToken123', '2024-12-31', GETDATE(), 1),
+('sampleHashedToken456', '2024-12-31', GETDATE(), 2),
+('sampleHashedToken789', '2024-12-31', GETDATE(), 3)
 
 INSERT INTO
 [event](name, date, comment)
