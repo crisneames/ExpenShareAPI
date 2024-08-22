@@ -1,4 +1,5 @@
 ﻿using ExpenShareAPI.Repositories;
+using ExpenShareAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IEventRepository, EventRepository>();
+
+builder.Services.AddSingleton<PasswordService>();
+builder.Services.AddTransient<UserService>();
 
 var app = builder.Build();
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace ExpenShareAPI.Utils;
 
@@ -83,6 +84,19 @@ public static class DbUtils
         return reader.GetBoolean(ordinal);
     }
 
+    // Adds parameter to SqlCommand
+    public static void AddParameter(SqlCommand cmd, string parameterName, object value) 
+    {
+        if (value is DateTime dateTimeValue)
+        {
+            cmd.Parameters.AddWithValue(parameterName, dateTimeValue > SqlDateTime.MinValue.Value ? dateTimeValue : (object)DBNull.Value);
+        }
+        else
+        {
+            cmd.Parameters.AddWithValue(parameterName, value ?? (object)DBNull.Value);
+        }
+    }
+
     /// <summary>
     ///  Get a DateTime? (nullable DateTime) from a data reader object and gracefully handle NULL values
     /// </summary>
@@ -98,6 +112,16 @@ public static class DbUtils
         }
 
         return reader.GetDateTime(ordinal);
+    }
+
+    // Gets a SQL-compatible DateTime or DBNull
+    public static object GetSqlCompatibleDateTime(DateTime? dateTime)
+    {
+        if (dateTime.HasValue && dateTime.Value > SqlDateTime.MinValue.Value)
+        {
+            return dateTime.Value;
+        }
+        return DBNull.Value;
     }
 
     /// <summary>
@@ -128,15 +152,15 @@ public static class DbUtils
     /// <param name="cmd">The command to which to add the parameter.</param>
     /// <param name="name">The name of the parameter.</param>
     /// <param name="value">The value of the parameter. May be null.</param>
-    public static void AddParameter(SqlCommand cmd, string name, object value)
-    {
-        if (value == null)
-        {
-            cmd.Parameters.AddWithValue(name, DBNull.Value);
-        }
-        else
-        {
-            cmd.Parameters.AddWithValue(name, value);
-        }
-    }
+    //public static void AddParameter(SqlCommand cmd, string name, object value)
+    //{
+    //    if (value == null)
+    //    {
+    //        cmd.Parameters.AddWithValue(name, DBNull.Value);
+    //    }
+    //    else
+    //    {
+    //        cmd.Parameters.AddWithValue(name, value);
+    //    }
+    // }
 }

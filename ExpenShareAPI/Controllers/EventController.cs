@@ -36,6 +36,21 @@ namespace ExpenShareAPI.Controllers
         //}
 
         // GET api/<EventController>/5
+        [HttpGet("UserEventExpenses")]
+        public IActionResult GetUserEventExpenses()
+        {
+            IEnumerable<UserEventExpenseDto> expenses = _eventRepository.GetUserExpenses();
+            return Ok(expenses);
+        }
+
+        [HttpGet("EventWithUsers")]
+        public IActionResult GetEventWithUsers()
+        {
+            IEnumerable<EventWithUsersDto> events = _eventRepository.GetEventWithUsers();
+            return Ok(events);
+        }
+
+        // GET api/<EventController>/5
         [HttpGet("{EventId}")]
         public IActionResult Get(int EventId)
         {
