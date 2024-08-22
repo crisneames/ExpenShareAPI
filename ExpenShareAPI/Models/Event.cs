@@ -18,5 +18,25 @@ namespace ExpenShareAPI.Models
 		public int UserId { get; set; }
 		public int EventId { get; set; }
 	}
+
+	public class UserEventExpenseDto
+	{
+		public int UserId { get; set; }
+		public string UserName { get; set; }
+		public int EventId { get; set; }
+		public string EventName { get; set; }
+		public decimal TotalExpenseAmount { get; set; }
+		public int NumberOfUsers { get; set; }
+		public decimal UserExpensePortion { get; set; }
+	}
+
+	public class EventWithUsersDto
+	{
+		public int EventId { get; set; }
+		public string EventName { get; set; }
+		public DateTime EventDate { get; set; }
+		public string EventComment { get; set; }
+		public List<User> Users { get; set; }
+	}
 }
 

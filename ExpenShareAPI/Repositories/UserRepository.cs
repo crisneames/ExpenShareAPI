@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Data.SqlTypes;
+using System.Security.Cryptography.Pkcs;
 using ExpenShareAPI.Models;
 using ExpenShareAPI.Utils;
+using Microsoft.Data.SqlClient;
 
 namespace ExpenShareAPI.Repositories;
 
@@ -9,39 +12,70 @@ public class UserRepository : BaseRepository, IUserRepository
 {
     public UserRepository(IConfiguration configuration) : base(configuration) { }
 
-    public List<User> GetAllUsers()
+    public User GetByUserName(string userName)
     {
+        User user = null;
         using (var conn = Connection)
         {
             conn.Open();
             using (var cmd = conn.CreateCommand())
             {
-                cmd.CommandText = @"SELECT id,
+                cmd.CommandText = @"SELECT * FROM [user] WHERE userName = @userName";
+                cmd.Parameters.AddWithValue("@userName", userName);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        user = new User
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            UserName = reader.GetString(reader.GetOrdinal("UserName")),
+                            PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash")),
+                            Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
+                            FullName = reader.IsDBNull(reader.GetOrdinal("FullName")) ? null : reader.GetString(reader.GetOrdinal("FullName")),
+                            CreatedAt = DbUtils.GetNullableDateTime(reader, "CreatedAt"),
+                            UpdatedAt = DbUtils.GetNullableDateTime(reader, "UpdatedAt"),
+                            LastLogin = DbUtils.GetNullableDateTime(reader, "LastLogin")
+                        };
+                    }
+                }
+            }
+        }
+        return user;
+    }
+    /* public list<user> getallusers()
+    {
+        using (var conn = connection)
+        {
+            conn.open();
+            using (var cmd = conn.createcommand())
+            {
+                cmd.commandtext = @"select id,
                                             name,
                                              email 
-                                   FROM [user]";
-                var reader = cmd.ExecuteReader();
-                var users = new List<User>();
+                                   from [user]";
+                var reader = cmd.executereader();
+                var users = new list<user>();
 
-                while (reader.Read())
+                while (reader.read())
                 {
-                    var user = new User()
+                    var user = new user()
                     {
-                        Id = DbUtils.GetInt(reader, "id"),
-                        Name = DbUtils.GetString(reader, "name"),
-                        Email = DbUtils.GetString(reader, "email")
+                        id = dbutils.getint(reader, "id"),
+                        name = dbutils.getstring(reader, "name"),
+                        email = dbutils.getstring(reader, "email")
                     };
 
-                    users.Add(user);
+                    users.add(user);
                 }
 
-                conn.Close();
+                conn.close();
                 return users;
             }
         }
-    }
+    } */
 
-    public User GetById(int id)
+    /* public User GetById(int id)
     {
         using (var conn = Connection)
         {
@@ -71,24 +105,29 @@ public class UserRepository : BaseRepository, IUserRepository
                 return user;
             }
         }
-    }
+    } */
+
     public void Add(User user)
     {
         using (var conn = Connection)
         {
             conn.Open();
-            using (var cmd = conn.CreateCommand())
+            using (var cmd = conn.CreateCommand()) 
             {
-                cmd.CommandText = @"
-                      INSERT INTO [user] (name, email)
-                        OUTPUT INSERTED.ID
-                        VALUES (@name, @email)";
+                cmd.CommandText = @"INSERT INTO [user] (userName, passwordHash, email, fullName, createdAt, updatedAt) 
+                                    VALUES (@userName, @passwordHash, @email, @fullName, @createdAt, @updatedAt)";
 
-                DbUtils.AddParameter(cmd, "@name", user.Name);
+                DbUtils.AddParameter(cmd, "@userName", user.UserName);
+                DbUtils.AddParameter(cmd, "@passwordHash", user.PasswordHash);
                 DbUtils.AddParameter(cmd, "@email", user.Email);
-              
+                DbUtils.AddParameter(cmd, "@fullName", user.FullName);
 
-                user.Id = (int)cmd.ExecuteScalar();
+                // Handle nullable DateTime values
+                DbUtils.AddParameter(cmd, "@createdAt", DbUtils.GetSqlCompatibleDateTime(user.CreatedAt));
+                DbUtils.AddParameter(cmd, "@updatedAt", DbUtils.GetSqlCompatibleDateTime(user.UpdatedAt));
+
+                cmd.ExecuteNonQuery();
+
             }
         }
     }
@@ -102,13 +141,15 @@ public class UserRepository : BaseRepository, IUserRepository
             {
                 cmd.CommandText = @"
                       UPDATE [user]
-                         SET name = @name,
-                              email = @email
+                         SET userName = @userName,
+                                email = @email,
+                             fullName = @fullName
                          WHERE id = @id";
 
                 DbUtils.AddParameter(cmd, "@id", user.Id);
-                DbUtils.AddParameter(cmd, "@name", user.Name);
+                DbUtils.AddParameter(cmd, "@name", user.UserName);
                 DbUtils.AddParameter(cmd, "@email", user.Email);
+                DbUtils.AddParameter(cmd, "@fullName", user.FullName);
 
                 cmd.ExecuteNonQuery();
             }
