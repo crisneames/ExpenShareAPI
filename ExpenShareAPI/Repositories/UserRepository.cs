@@ -4,6 +4,7 @@ using System.Security.Cryptography.Pkcs;
 using ExpenShareAPI.Models;
 using ExpenShareAPI.Utils;
 using Microsoft.Data.SqlClient;
+using Microsoft.DiaSymReader;
 
 namespace ExpenShareAPI.Repositories;
 
@@ -12,7 +13,7 @@ public class UserRepository : BaseRepository, IUserRepository
 {
     public UserRepository(IConfiguration configuration) : base(configuration) { }
 
-    public User GetByUserName(string userName)
+    public User GetByUserName(string UserName)
     {
         User user = null;
         using (var conn = Connection)
@@ -21,18 +22,22 @@ public class UserRepository : BaseRepository, IUserRepository
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = @"SELECT * FROM [user] WHERE userName = @userName";
-                cmd.Parameters.AddWithValue("@userName", userName);
+                cmd.Parameters.AddWithValue("@userName", UserName);
                 using (var reader = cmd.ExecuteReader())
+
+
+
+
                 {
                     if (reader.Read())
                     {
                         user = new User
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            UserName = reader.GetString(reader.GetOrdinal("UserName")),
-                            PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash")),
-                            Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
-                            FullName = reader.IsDBNull(reader.GetOrdinal("FullName")) ? null : reader.GetString(reader.GetOrdinal("FullName")),
+                            Id = DbUtils.GetInt(reader, "Id"),
+                            UserName = DbUtils.GetString(reader, "UserName"),
+                            PasswordHash = DbUtils.GetString(reader, "PasswordHash"),
+                            Email = DbUtils.GetString(reader, "Email"),
+                            FullName = DbUtils.GetString(reader, "FullName"),
                             CreatedAt = DbUtils.GetNullableDateTime(reader, "CreatedAt"),
                             UpdatedAt = DbUtils.GetNullableDateTime(reader, "UpdatedAt"),
                             LastLogin = DbUtils.GetNullableDateTime(reader, "LastLogin")

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "IEsgM9s6qXU=",
+  "dgSpecHash": "bq/IJLU7ykE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\deann\\Source\\Repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
+  "projectFilePath": "C:\\Users\\deann\\source\\repos\\ExpenShareAPI\\ExpenShareAPI\\ExpenShareAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\deann\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\deann\\.nuget\\packages\\azure.identity\\1.11.3\\azure.identity.1.11.3.nupkg.sha512",
@@ -57,6 +57,7 @@
     "C:\\Users\\deann\\.nuget\\packages\\humanizer.core.zh-cn\\2.14.1\\humanizer.core.zh-cn.2.14.1.nupkg.sha512",
     "C:\\Users\\deann\\.nuget\\packages\\humanizer.core.zh-hans\\2.14.1\\humanizer.core.zh-hans.2.14.1.nupkg.sha512",
     "C:\\Users\\deann\\.nuget\\packages\\humanizer.core.zh-hant\\2.14.1\\humanizer.core.zh-hant.2.14.1.nupkg.sha512",
+    "C:\\Users\\deann\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.8\\microsoft.aspnetcore.authentication.jwtbearer.7.0.8.nupkg.sha512",
     "C:\\Users\\deann\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.13\\microsoft.aspnetcore.openapi.7.0.13.nupkg.sha512",
     "C:\\Users\\deann\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.11\\microsoft.aspnetcore.razor.language.6.0.11.nupkg.sha512",
     "C:\\Users\\deann\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
