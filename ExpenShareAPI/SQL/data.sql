@@ -20,14 +20,15 @@ CREATE TABLE [user] (
   [email] VARCHAR(255) UNIQUE,            
   [fullName] VARCHAR(255),               
   [createdAt] DATETIME DEFAULT GETDATE(),  
-  [ipdatedAt] DATETIME DEFAULT GETDATE(),  
+  [updatedAt] DATETIME DEFAULT GETDATE(),  
   [lastLogin] DATETIME                     
 )
 GO
 
 CREATE TABLE [tokens] (
     [tokenId] INT PRIMARY KEY IDENTITY(1,1),
-    [refreshToken] VARCHAR(255),                  
+    [accessToken] VARCHAR(1000),
+    [refreshToken] VARCHAR(1000), 
     [expiresAt] DATETIME,                          
     [createdAt] DATETIME DEFAULT GETDATE(),        
     [revokedAt] DATETIME,
@@ -76,11 +77,11 @@ VALUES
 ('cliffy2', 'hashedpassword_3', 'clifford@mail.com', 'Cliff Neames', GETDATE())
 
 INSERT INTO
-[tokens](refreshToken, expiresAt, createdAt, userId)
+[tokens](accessToken, refreshToken, expiresAt, createdAt, userId)
 VALUES
-('sampleHashedToken123', '2024-12-31', GETDATE(), 1),
-('sampleHashedToken456', '2024-12-31', GETDATE(), 2),
-('sampleHashedToken789', '2024-12-31', GETDATE(), 3)
+('sampleAccessHashedToken123', 'sampleHashedToken123', '2024-12-31', GETDATE(), 1),
+('sampleAccessHashedToken456','sampleHashedToken456', '2024-12-31', GETDATE(), 2),
+('sampleAccessHashedToken789','sampleHashedToken789', '2024-12-31', GETDATE(), 3)
 
 INSERT INTO
 [event](name, date, comment)
