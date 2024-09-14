@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using ExpenShareAPI.Repositories;
 using ExpenShareAPI.Models;
 using ExpenShareAPI.Utils;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Cors;
 
 namespace ExpenShareAPI.Controllers
 {
@@ -18,13 +23,14 @@ namespace ExpenShareAPI.Controllers
         private readonly IUserRepository _userRepository;
         private readonly PasswordService _passwordService;
         private readonly UserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public UserController(IUserRepository userRepository, PasswordService passwordService, UserService userService)
+        public UserController(IUserRepository userRepository, PasswordService passwordService, UserService userService, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
             _userService = userService;
-
+            _configuration = configuration;
         }
 
         // GET: api/user/{userName}
@@ -59,6 +65,58 @@ namespace ExpenShareAPI.Controllers
             _userRepository.Add(newUser);
             return Ok();
         }
+
+        [EnableCors("AllowAllOrigins")]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] UserLogin login)
+        {
+            Console.WriteLine("API called with UserName: " + login.UserName); //log the request
+
+            var user = _userRepository.GetByUserName(login.UserName);  // Compare the userName field
+
+            // Verify the provided password against the stored hashed password
+            bool isPasswordValid = _passwordService.VerifyPassword(login.Password, user.PasswordHash);
+            if (!isPasswordValid)
+            {
+                return Unauthorized(new { Message = "Invalid username or password" });
+            }
+
+            var token = GenerateJwtToken(user);
+            Console.WriteLine("Generated user " + user.UserName);
+            Console.WriteLine("Generated Token: " + token);  // Log the token
+
+            return Ok(new { id = user.Id,
+                userName = user.UserName,
+                email = user.Email,
+                token });
+
+        }
+
+        private string GenerateJwtToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] 
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        [HttpPost("test")]
+        public IActionResult TestJson([FromBody] Dictionary<string, string> data)
+        {
+            return Ok(new { message = "Received JSON", data });
+        }
+
 
         // GET: api/User
         // [HttpGet]
@@ -109,3 +167,14 @@ namespace ExpenShareAPI.Controllers
         }
     }
 }
+
+
+// Mocked check for email/password (replace with database check) from CN ChatGPT
+/*
+ * if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.PasswordHash))  // Compare the hashedPassword field
+            {
+                return Unauthorized(new { message = "Invalid userName or password" });
+            }
+
+            return Unauthorized();
+*/
