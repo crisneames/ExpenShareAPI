@@ -63,7 +63,13 @@ namespace ExpenShareAPI.Controllers
             };
 
             _userRepository.Add(newUser);
-            return Ok();
+
+            if (newUser == null) 
+            {
+                return BadRequest(new { message = "User creation failed" });
+            }
+
+            return Ok(new { message = "User created successfully"});
         }
 
         [EnableCors("AllowAllOrigins")]
@@ -84,9 +90,11 @@ namespace ExpenShareAPI.Controllers
             var token = GenerateJwtToken(user);
             Console.WriteLine("Generated user " + user.UserName);
             Console.WriteLine("Generated Token: " + token);  // Log the token
+            Console.WriteLine($"Generated token for user ID: {user.Id}");
 
             return Ok(new { id = user.Id,
                 userName = user.UserName,
+                fullName = user.FullName,
                 email = user.Email,
                 token });
 

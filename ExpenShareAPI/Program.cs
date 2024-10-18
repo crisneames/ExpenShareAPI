@@ -1,6 +1,7 @@
 ﻿using ExpenShareAPI.Repositories;
 using ExpenShareAPI.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Build.Execution;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -54,11 +55,11 @@ if (app.Environment.IsDevelopment())
 
     app.UseCors(options =>
     {
-        //options.WithOrigins("http://localhost:3000");
-        options.AllowAnyOrigin();  // Adjust based on your needs (use AllowSpecificOrigins for production)
+        options.WithOrigins("https://localhost:3000");
+        //options.AllowAnyOrigin();  // Adjust based on your needs (use AllowSpecificOrigins for production)
         options.AllowAnyMethod();
         options.AllowAnyHeader();
-        //options.AllowCredentials();
+        options.AllowCredentials();
     });
 }
 
