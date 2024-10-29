@@ -261,7 +261,7 @@ namespace ExpenShareAPI.Repositories
             }
         }
 
-        public IEnumerable<UserEventExpenseDto> GetUserExpenses()
+        public IEnumerable<UserEventExpenseDto> GetUserExpenses(int id)
         {
             var results = new List<UserEventExpenseDto>();
 
@@ -291,9 +291,11 @@ namespace ExpenShareAPI.Repositories
 		                                        FROM userEvent
 		                                        GROUP BY eventId
 	                                        ) AS UserCounts ON E.id = UserCounts.eventId
+                                        WHERE U.id = @id
                                         GROUP BY
 	                                        U.id, U.userName, E.id, E.name, UserCounts.NumberOfUsers;";
 
+                    cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();
 
                     while (reader.Read())

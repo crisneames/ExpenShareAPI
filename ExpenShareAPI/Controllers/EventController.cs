@@ -36,11 +36,19 @@ namespace ExpenShareAPI.Controllers
         //}
 
         // GET api/<EventController>/5
-        [HttpGet("UserEventExpenses")]
-        public IActionResult GetUserEventExpenses()
+        [HttpGet("UserEventExpense/{id}")]
+        public IActionResult GetUserEventExpenses(int id)
         {
-            IEnumerable<UserEventExpenseDto> expenses = _eventRepository.GetUserExpenses();
-            return Ok(expenses);
+            try
+            {
+                IEnumerable<UserEventExpenseDto> expenses = _eventRepository.GetUserExpenses(id);
+                return Ok(expenses);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw new Exception("Error restriving user expenses", ex);
+            }
         }
 
         [HttpGet("EventWithUsers")]

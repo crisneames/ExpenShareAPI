@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ExpenShareAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46e7acc8d3f993653cea1e0cd2ac672b74eec78f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f92db61b41c5a27a12674f1b1e20526772b4ebe1")]
 [assembly: System.Reflection.AssemblyProductAttribute("ExpenShareAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ExpenShareAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

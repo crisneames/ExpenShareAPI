@@ -10,7 +10,7 @@ namespace ExpenShareAPI.Repositories
         List<Event> GetEvents();
         Event GetEventWithUsers(int EventId);
         void UpdateEvent(Event gig);
-        IEnumerable<UserEventExpenseDto> GetUserExpenses();
+        IEnumerable<UserEventExpenseDto> GetUserExpenses(int id);
         IEnumerable<EventWithUsersDto> GetEventWithUsers();
     }
 }
